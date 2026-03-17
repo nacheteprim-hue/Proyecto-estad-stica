@@ -1,0 +1,79 @@
+---
+title: "Proyecto_Estadistica"
+author: "Ignacio Prim"
+date: "2025-01-11"
+output: html_document
+---
+primero habilitamos readxl e importamos los datos, los ficheros tablas_ambos_sexos_depurada. tablas_varones_depurada y tablas_mujeres_depurada.
+```{r}
+datos_mujeres<-Tablas_mujeres_depurada
+datos_varones<-tablas_Varones_depurada
+datos_ambos_sexos<-tablas_ambos_sexos_depurada
+```
+con esto, hemos añadido los datos a Rstudio, y podemos trabajar con ellos, para comenzar, sacaremos de ellos tanto como la descriptiva nos permita
+```{r}
+#activamos la librería DescTools
+Gmean(datos_mujeres$`Tasa de paro juvenil`)
+Gmean(datos_varones$`Tasa de paro juvenil`)
+Gmean(datos_ambos_sexos$`Tasa de Paro Juvenil`)
+```
+A priori ya se puede observar que la tasa media de hombres Parados es superior a la de las mujeres en un 5%, lo que ya nos permite ver que existe relacion entre sexo y tasa de paro.
+
+A continuación calcularemos las desviaciones tipicas y los coeficientes de variacion para medir cuan representativa es la media, después, trataremos de elaborar un diagrama de caja para la tasa de paro(indistintamente del sexo en este caso, los otros dos conjuntos de datos son utiles para medir la correlacion entre sexo y tasa de paro, pero serán secundarios).
+
+```{r}
+sd(datos_mujeres$`Tasa de paro juvenil`)
+sd(datos_varones$`Tasa de paro juvenil`)
+sd(datos_ambos_sexos$`Tasa de Paro Juvenil`)
+```
+```{r}
+CoefVar(datos_varones$`Tasa de paro juvenil`)
+CoefVar(datos_mujeres$`Tasa de paro juvenil`)
+CoefVar(datos_ambos_sexos$`Tasa de Paro Juvenil`)
+```
+Debido a que los 3 son bastante pequeños, hemos encontrado una media bastante representativa en los 3 casos, por lo que podemos hacer uso de ella para hacer estimaciones y promedios.
+Ahora, pasemos al diagrama de caja, que ilustrará mejor la concentración de las tasas de paro.
+
+```{r}
+boxplot(datos_ambos_sexos$`Tasa de Paro Juvenil`)
+```
+El diagrama es bastante simétrico respecto a la mediana y, además, bastante compacto, lo que quiere decir que, a excepción de los 2 atípicos(seguramente Ceuta y Melilla), la tasa de paro se distribuye de manera relativamente homogénea respecto a la mediana, el diagrama de caja nos ayuda a ver que la relación entre provincia y tasa de paro no es muy
+elevada(si omitimos a Ceuta y Melilla). Finalmente, habiendo calculado una media representativa y observado que los datos están concentrados en torno a la mediana, vamos a tomar la mediana del conjunto de datos para observar que es muy similar a la media, y que por tanto es un conjunto de datos simétrico.
+```{r}
+median(datos_ambos_sexos$`Tasa de Paro Juvenil`)
+```
+La moda y la mediana son casi idénticas (0.1538 y 0.1546), por tanto, como se veía en el diagrama de caja, el conjunto de datos es bastante simétrico.
+
+Y, con esto, tenemos unos cuantos datos sobre nuestro conjunto de datos,
+en el que tomamos la tasa de paro de personas entre 16 y 29 años en diversas comunidades autónomas, de los que podemos inferir bastante información:
+-la tasa de paro media(considerando ambos sexos indistintamente) es de un 15.46%, la cual es representativa por el coeficiente de variación.
+-la desviación típica es 0.026, la cual es bastante pequeña(incluso a pesar de la esxistencia de 2 atípicos)
+-como se observa en el diagrama de caja, la mayoría de los datos se hallan  muy concentrados alrededor de la mediana, 0.1538.
+-debido a que la mediana y la media son esencialmente iguales, la tasa de paro se distribuye de forma simétrica a lo largo de las comunidades autónomas
+
+
+Ahora, para estudiar la relación lineal entre la tasa de paro y el sexo, vamos a estudiar la nube de puntos generada al comparar la tasa deparo general y la segregada por sexos, así como comparar una serie de medidas.
+```{r}
+plot(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_mujeres$`Tasa de paro juvenil`)
+```
+```{r}
+plot(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_varones$`Tasa de paro juvenil`)
+```
+
+```{r}
+cov(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_mujeres$`Tasa de paro juvenil`)
+cov(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_varones$`Tasa de paro juvenil`)
+```
+Esto se debe a los datos atípicos, Ceuta y Melilla, que hacen significativamente más irregulares los datos, sin embargo, la correlación es muy grande:
+```{r}
+CramerV(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_mujeres$`Tasa de paro juvenil`)
+CramerV(datos_ambos_sexos$`Tasa de Paro Juvenil`,datos_varones$`Tasa de paro juvenil`)
+```
+Una correlación tremendamente alta(perfecta en el segundo caso, de hecho), a su vez, como se vió en las nubes de puntos, si exceptuamos ceuta y Melilla, existe relación lineal.
+
+A continuación, para finalizar, realizaremos el modelo de regresión entre el fichero datos_ambos_sexos ylos ficheros de datos segregados. Debido a que hemos observado linealidad y homocedasticidad en las nubes de puntos anteriores(con la pequeña pega de Ceuta y Melilla,de la cual las transformaciones no nos librarán), podemos proceder directamente con la regresión lineal
+```{r}
+model<-lm(datos_ambos_sexos$`Tasa de Paro Juvenil`~datos_mujeres$`Tasa de paro juvenil`+datos_varones$`Tasa de paro juvenil`)
+plot(residuals(model))
+```
+
