@@ -45,7 +45,7 @@ median(datos_ambos_sexos$`Tasa de Paro Juvenil`)
 La moda y la mediana son casi idénticas (0.1538 y 0.1546), por tanto, como se veía en el diagrama de caja, el conjunto de datos es bastante simétrico.
 
 Y, con esto, tenemos bastante información sobre nuestro conjunto de datos,
-de los que podemos inferir bastante información:
+de los que podemos inferir lo siguiente:
 -La tasa de paro media(considerando ambos sexos indistintamente) es de un 15.46%, la cual es representativa por el coeficiente de variación.
 -La desviación típica es 0.026, la cual es bastante pequeña(incluso a pesar de la existencia de 2 atípicos)
 -Como se observa en el diagrama de caja, la mayoría de los datos se hallan  muy concentrados alrededor de la mediana, 0.1538.
